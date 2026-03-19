@@ -1,26 +1,73 @@
 import { useState } from "react";
 import "./App.css";
 import { SmilePlus, Sparkles, Send, Trash2, Menu } from "lucide-react";
+import { URL } from "./constants";
+import Answers from "./components/Answers";
+import ReactMarkdown from "react-markdown";
+
 function App() {
+  const [querry, setQuerry] = useState("");
+  const [result, setResult] = useState(undefined);
+
+  //Logic for API
+  const payload = {
+    contents: [
+      {
+        parts: [{ text: querry }],
+        // "Format your response in clean markdown. Use code blocks with language."
+      },
+    ],
+  };
+  const askQuerry = async () => {
+    let response = await fetch(URL, {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+
+    response = await response.json();
+
+    let dataString = response.candidates?.[0]?.content?.parts?.[0]?.text;
+    dataString = dataString.split("* ");
+    dataString = dataString.map((item) => item.trim());
+
+    console.log(dataString);
+    setResult(dataString);
+  };
+
   const [isFocused, setIsFocused] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [isActive, setIsActive] = useState(false);
-  const [showHistory, setShowHistory] = useState(false);
 
   return (
     <>
-      <div className="grid grid-cols-5 h-screen text-center">
-        
-        {/* Search History */} 
-        <div className="col-span-1 bg-zinc-800 text-white flex justify-center gap-2 pt-3 "> 
-          Recent Search 
-          <Trash2/> 
+      <div className="grid grid-cols-5 h-screen text-center border border-gray-500">
+        {/* Search History */}
+        <div className="col-span-1 bg-zinc-800 text-white flex justify-center gap-2 pt-3 border border-gray-500">
+          Recent Search
+          <Trash2 />
         </div>
 
         {/* Top Message */}
-        <div className="col-span-4"  onMouseEnter={() => setIsActive(true)}  onMouseLeave={() => setIsActive(false)}>
-          <div className="container h-160"> 
-            <div className="pt-18">
+        <div
+          className="col-span-4"
+          onMouseEnter={() => setIsActive(true)}
+          onMouseLeave={() => setIsActive(false)}
+        >
+          <div className="container h-160 overflow-scroll">
+            <div className="text-white">
+              <ul>
+                {/* {result} */}
+                <ul>
+                  {result &&
+                    result.map((item, index) => (
+                      <li className="p-1 text-left ml-2">
+                        <Answers ans={item} key={index} />
+                      </li>
+                    ))}
+                </ul>
+              </ul>
+            </div>
+            {/* <div className="pt-18">
               <h1
                 className={`text-4xl md:text-5xl font-semibold transition-all duration-500 ease-out ${
                   isActive
@@ -28,9 +75,9 @@ function App() {
                     : "text-gray-400 scale-100"
                 }`}
               >
-                Hello User, I'm here for your Help
+                How can I help you today?
               </h1>
-            </div>
+            </div> */}
           </div>
 
           {/* SearchBar Start*/}
@@ -61,9 +108,13 @@ function App() {
                 setIsFocused(false);
                 setIsTyping(false);
               }}
-              onChange={(e) => setIsTyping(e.target.value.length > 0)}
+              value={querry}
+              onChange={(e) => setQuerry(e.target.value)}
             />
-            <button className="mr-4 relative w-6 h-6 flex items-center justify-center">
+            <button
+              className="mr-4 relative w-6 h-6 flex items-center justify-center"
+              onClick={askQuerry}
+            >
               <Send
                 className={`absolute transition-all duration-300
                   ${isFocused || isTyping ? "text-blue-400 scale-110 animate-send" : "text-blue-200 scale-100"} 
