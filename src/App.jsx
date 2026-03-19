@@ -10,7 +10,10 @@ function App() {
   const [result, setResult] = useState(undefined);
 
   //Logic for API
-  const payload = {
+  
+  const askQuerry = async () => { 
+    if (!querry.trim()) return;
+    const payload = {
     contents: [
       {
         parts: [{ text: querry }],
@@ -18,17 +21,17 @@ function App() {
       },
     ],
   };
-  const askQuerry = async () => {
+
     let response = await fetch(URL, {
       method: "POST",
       body: JSON.stringify(payload),
     });
-
+    
     response = await response.json();
 
-    let dataString = response.candidates?.[0]?.content?.parts?.[0]?.text;
-    dataString = dataString.split("* ");
-    dataString = dataString.map((item) => item.trim());
+    let dataString = response.candidates[0].content.parts[0].text;
+    
+    
 
     console.log(dataString);
     setResult(dataString);
@@ -110,6 +113,12 @@ function App() {
               }}
               value={querry}
               onChange={(e) => setQuerry(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  askQuerry();
+                }
+              }}
             />
             <button
               className="mr-4 relative w-6 h-6 flex items-center justify-center"
