@@ -1,41 +1,37 @@
 import { useState } from "react";
-import "./App.css";
-import { SmilePlus, Sparkles, Send, Trash2, Menu } from "lucide-react";
+import { SmilePlus, Sparkles, Send, Trash2, Menu, Key } from "lucide-react";
 import { URL } from "./constants";
 import Answers from "./components/Answers";
-import ReactMarkdown from "react-markdown";
+
 
 function App() {
   const [querry, setQuerry] = useState("");
-  const [result, setResult] = useState(undefined);
+  const [result, setResult] = useState([]);
 
   //Logic for API
-  
-  const askQuerry = async () => { 
-    if (!querry.trim()) return;
-    const payload = {
-    contents: [
-      {
-        parts: [{ text: querry }],
-        // "Format your response in clean markdown. Use code blocks with language."
-      },
-    ],
+  const payload = {
+      contents: [ {
+          parts: [{ text: querry }],
+          // "Format your response in clean markdown. Use code blocks with language."
+      },],
   };
+  const askQuerry = async () => {
 
     let response = await fetch(URL, {
       method: "POST",
       body: JSON.stringify(payload),
     });
-    
+
     response = await response.json();
 
     let dataString = response.candidates[0].content.parts[0].text;
-    
-    
+    dataString=dataString.split("* ")
+    dataString=dataString.map((item) => item.trim())
 
-    console.log(dataString);
-    setResult(dataString);
+    // console.log(dataString);
+    setResult([...result , {type: 'q' , text:querry} ,{ type: 'a',text:dataString}  ]);
   };
+console.log(result);
 
   const [isFocused, setIsFocused] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
@@ -53,21 +49,28 @@ function App() {
         {/* Top Message */}
         <div
           className="col-span-4"
-          onMouseEnter={() => setIsActive(true)}
-          onMouseLeave={() => setIsActive(false)}
+          // onMouseEnter={() => setIsActive(true)}
+          // onMouseLeave={() => setIsActive(false)}
         >
           <div className="container h-160 overflow-scroll">
-            <div className="text-white">
-              <ul>
-                {/* {result} */}
-                <ul>
-                  {result &&
-                    result.map((item, index) => (
-                      <li className="p-1 text-left ml-2">
-                        <Answers ans={item} key={index} />
-                      </li>
-                    ))}
-                </ul>
+            <div className="text-zinc-200 m-2 p-2">
+              <ul className="p-3 m-2">
+              {
+                result.map((item,index)=>(
+                 <div key={index} className={item.type=='q' ? 'flex justify-end' : ''}>
+                  {
+                     item.type == 'q' 
+                  ? 
+                  <li key={index} className="text-right  p-1 border-8 border-zinc-700 bg-zinc-700 rounded-tl-3xl rounded-br-3xl rounded-bl-3xl w-fit">
+                    <Answers ans={item.text}  key={index} totalResult={1} type={item.type}/></li> 
+                  :
+                  item.text.map((ansItem,ansIndex)=>(
+                    <li key={ansIndex} className="text-left p-1"><Answers ans={ansItem}  key={ansIndex} totalResult={item.length} type={item.type}/></li>
+                  ))
+                  }
+                 </div>
+                ))
+              }
               </ul>
             </div>
             {/* <div className="pt-18">
@@ -113,12 +116,12 @@ function App() {
               }}
               value={querry}
               onChange={(e) => setQuerry(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  askQuerry();
-                }
-              }}
+              // onKeyDown={(e) => {
+              //   if (e.key === "Enter") {
+              //     e.preventDefault();
+              //     askQuerry();
+              //   }
+              // }}
             />
             <button
               className="mr-4 relative w-6 h-6 flex items-center justify-center"
