@@ -45,6 +45,7 @@ function App() {
       { type: "q", text: querry },
       { type: "a", text: dataString },
     ]);
+    setQuerry('')
   };
   console.log(recentHistory);
 
@@ -56,7 +57,7 @@ function App() {
     localStorage.clear();
     setRecentHistory([]);
   }
-
+  
   return (
     <>
       <div className="grid grid-cols-5 h-screen text-center border border-gray-500">
@@ -162,12 +163,13 @@ function App() {
               }}
               value={querry}
               onChange={(e) => setQuerry(e.target.value)}
-              // onKeyDown={(e) => {
-              //   if (e.key === "Enter") {
-              //     e.preventDefault();
-              //     askQuerry();
-              //   }
-              // }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  askQuerry();
+                }
+              }}
+              
             />
             <button
               className="mr-4 relative w-6 h-6 flex items-center justify-center"
