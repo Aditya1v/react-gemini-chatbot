@@ -1,16 +1,147 @@
-# React + Vite
+# 🤖 AI Chatbot (React + Gemini API)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern AI-powered chatbot built using **React**, featuring real-time conversation, context awareness, and a clean responsive UI.
+Deployed and fully functional with Google Gemini API.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🚀 Live Demo
 
-## React Compiler
+🔗 https://react-ai-chatbot-ten.vercel.app/
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## ✨ Features
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+* 💬 Real-time chat interface
+* 🧠 Context-based conversation handling
+* ⚡ Instant response with loading animation
+* 🎨 Clean and modern UI (Dark/Light mode)
+* 📱 Fully responsive (mobile + desktop)
+* 🗂️ Multiple chat history support
+* 🧹 Delete chats functionality
+* 🔄 Smooth animations (message + UI transitions)
+
+---
+
+## 🛠️ Tech Stack
+
+* **Frontend:** React, Tailwind CSS
+* **State Management:** Context API
+* **API:** Google Gemini API
+* **Icons:** Lucide React
+* **Deployment:** Vercel
+
+---
+
+## 📂 Project Structure
+
+```
+src/
+│── components/
+│   ├── ChatLayout.jsx
+│   ├── Sidebar.jsx
+│   ├── QuerryAnswer.jsx
+│   └── Answers.jsx
+│
+│── context/
+│   └── ChatContext.jsx
+│
+│── services/
+│   └── chatService.js
+│
+│── utils/
+│   └── chatHelpers.js
+│
+│── constants/
+│   └── constants.js
+│
+└── App.jsx
+```
+
+---
+
+## ⚙️ Installation & Setup
+
+Clone the repository:
+
+```bash
+git clone https://github.com/your-username/your-repo-name.git
+cd your-repo-name
+```
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Create a `.env` file:
+
+```env
+VITE_API_KEY=your_gemini_api_key
+```
+
+Run the project:
+
+```bash
+npm run dev
+```
+
+---
+
+## 🌐 Deployment
+
+This project is deployed using **Vercel**.
+
+Steps:
+
+1. Push code to GitHub
+2. Import project in Vercel
+3. Add environment variable:
+
+   ```
+   VITE_API_KEY=your_api_key
+   ```
+4. Deploy 🚀
+
+---
+
+## 🧠 Key Learnings
+
+* Handling async API calls in real-time apps
+* Managing global state using Context API
+* Building responsive and interactive UI
+* Debugging API & deployment issues
+* Understanding environment variables and production setup
+
+---
+
+<!-- ## 📸 Screenshots
+
+(Add your project screenshots here)
+
+--- -->
+
+## 📌 Future Improvements
+
+* Typing animation (AI response)
+* Streaming responses
+* Chat rename feature
+* Copy message button
+* Better markdown rendering
+
+---
+
+## 👨‍💻 Author
+
+**Aditya**
+
+* Passionate about AI, development, and building real-world projects
+* Always learning and improving 🚀
+
+---
+
+## ⭐ Support
+
+If you like this project, give it a ⭐ on GitHub!
