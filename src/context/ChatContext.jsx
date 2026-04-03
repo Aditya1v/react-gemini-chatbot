@@ -8,7 +8,7 @@ export const ChatProvider = ({ children }) => {
   const [querry, setQuerry] = useState("");
   const [result, setResult] = useState([]);
   const [chats, setChats] = useState(
-    JSON.parse(localStorage.getItem("chats")) || []
+    JSON.parse(localStorage.getItem("chats")) || [],
   );
   const [currentChatId, setCurrentChatId] = useState(null);
 
@@ -40,81 +40,108 @@ export const ChatProvider = ({ children }) => {
   };
 
   const askQuerry = async () => {
-  if (!querry) return;
+    if (!querry) return;
 
-  let chatId = currentChatId;
-  let updatedChats = [...chats];
+    let chatId = currentChatId;
+    let updatedChats = [...chats];
 
-  // 🔥 FIX 1: AUTO CREATE CHAT (FIRST MESSAGE)
-  if (!chatId) {
-    const newChat = {
-      id: Date.now(),
-      messages: [],
-      title: "New Chat",
-    };
+    if (!chatId) {
+      const newChat = {
+        id: Date.now(),
+        messages: [],
+        title: "New Chat",
+      };
 
-    updatedChats = [newChat, ...updatedChats];
-    setChats(updatedChats);
-    setCurrentChatId(newChat.id);
+      updatedChats = [newChat, ...updatedChats];
+      setChats(updatedChats);
+      setCurrentChatId(newChat.id);
 
-    chatId = newChat.id;
-  }
+      chatId = newChat.id;
+    }
 
-  const currentChat = updatedChats.find((c) => c.id === chatId);
+    const currentChat = updatedChats.find((c) => c.id === chatId);
 
-  setQuerry("");
+    setQuerry("");
 
-  const tempMessages = [
-    ...(currentChat?.messages || []),
-    { type: "q", text: querry },
-    { type: "loading" },
-  ];
-
-  setResult(tempMessages);
-
-  try {
-    const conversation = currentChat
-      ? buildConversation(currentChat.messages)
-      : [];
-
-    const payload = {
-      contents: [
-        ...conversation,
-        { role: "user", parts: [{ text: querry }] },
-      ],
-    };
-
-    const answer = await fetchChatResponse(payload);
-
-    const finalMessages = [
+    const tempMessages = [
       ...(currentChat?.messages || []),
       { type: "q", text: querry },
-      { type: "a", text: answer },
+      { type: "a", text: "Typing", loading: true },
     ];
 
-    // 🔥 FIX 2: SAFE UPDATE (no replace issue)
-    updatedChats = updatedChats.map((chat) =>
-      chat.id === chatId
-        ? {
-            ...chat,
-            messages: finalMessages,
-            title: generateChatTitle(querry, chat.title),
-          }
-        : chat
-    );
+    setResult(tempMessages);
 
-    setChats(updatedChats);
-    setResult(finalMessages);
-    localStorage.setItem("chats", JSON.stringify(updatedChats));
+    try {
+      const conversation = currentChat
+        ? buildConversation(currentChat.messages.slice(-5))
+        : [];
 
-  } catch {
-    alert("API error");
-  }
-};
+      const payload = {
+        contents: [
+          ...conversation,
+          { role: "user", parts: [{ text: querry }] },
+        ],
+      };
+
+      const answer = await fetchChatResponse(payload);
+
+      const finalMessages = [
+        ...(currentChat?.messages || []),
+        { type: "q", text: querry },
+        { type: "a", text: answer ,  loading: false },
+      ];
+      typeText(answer, (partialText) => {
+        setResult((prev) => {
+          const updated = [...prev];
+
+          updated[updated.length - 1] = {
+            type: "a",
+            text: partialText,
+            loading:false,
+          };
+
+          return updated;
+        });
+      });
+      setTimeout(() => {
+        setChats(updatedChats);
+        localStorage.setItem("chats", JSON.stringify(updatedChats));
+      }, answer.length * 15);
+
+      updatedChats = updatedChats.map((chat) =>
+        chat.id === chatId
+          ? {
+              ...chat,
+              messages: finalMessages,
+              title: generateChatTitle(querry, chat.title),
+            }
+          : chat,
+      );
+
+      setChats(updatedChats);
+      // setResult(finalMessages);
+      localStorage.setItem("chats", JSON.stringify(updatedChats));
+    } catch {
+      alert("API error");
+    }
+  };
   const deleteChat = (id) => {
-  const updated = chats.filter(chat => chat.id !== id);
-  setChats(updated);
-};
+    const updated = chats.filter((chat) => chat.id !== id);
+    setChats(updated);
+  };
+  const typeText = (text, callback) => {
+    let index = 0;
+
+    const interval = setInterval(() => {
+      index++;
+
+      callback(text.slice(0, index));
+
+      if (index >= text.length) {
+        clearInterval(interval);
+      }
+    }, 15);
+  };
 
   return (
     <ChatContext.Provider
@@ -126,7 +153,7 @@ export const ChatProvider = ({ children }) => {
         askQuerry,
         loadChat,
         createNewChat,
-        deleteChat
+        deleteChat,
       }}
     >
       {children}
