@@ -4,10 +4,7 @@ import QuerryAnswer from "./QuerryAnswer";
 import { useState } from "react";
 import { useEffect, useRef } from "react";
 
-
-
-
-const ChatLayout = () => {
+const ChatLayout = ({ isOpen }) => {
   const { result, querry, setQuerry, askQuerry } = useChat();
 
   const [isFocused, setIsFocused] = useState(false);
@@ -22,9 +19,8 @@ const ChatLayout = () => {
 
   return (
     <div className="col-span-4 flex flex-col h-screen  relative">
-      
       {/* Header */}
-     <div
+      <div
         className={`absolute top-[35%] left-1/2 -translate-x-1/2 -translate-y-1/2
         pointer-events-none transition-all duration-500
         ${showWelcome ? "opacity-100 scale-100" : "opacity-0 scale-90"}`}
@@ -40,10 +36,9 @@ const ChatLayout = () => {
           Hello, User <br /> Ask me Anything
         </h1>
       </div>
-      
 
       {/* Chat Area */}
-      <div className="flex-1 overflow-y-auto min-h-0 px-3 md:px-10 pb-24 py-6">
+      <div className="flex-1 overflow-y-auto min-h-0 px-3 md:px-10 pb-28 py-6">
         <ul className="space-y-4 w-full max-w-xl mx-auto">
           {result.map((item, index) => (
             <QuerryAnswer key={index} item={item} />
@@ -51,16 +46,20 @@ const ChatLayout = () => {
           <div ref={bottomRef} />
         </ul>
       </div>
-      
 
       {/* Search Bar */}
-      <div className="pb-4 md:pb-15  bg-transparent backdrop-blur-sm">
+      <div
+        className={`fixed bottom-4 left-1/2 -translate-x-1/2 w-full px-3 z-50 
+        transition-all duration-300 ease-in-out
+        ${isOpen ? "translate-y-24 opacity-0 pointer-events-none" : "translate-y-0 opacity-100"}
+        `}
+      >
         <div
-          className={`flex items-center w-[95%] md:w-1/2 mx-auto rounded-full border p-1 transition-all duration-300
+          className={`flex items-center w-full max-w-xl mx-auto rounded-full border p-1 transition-all duration-300
           ${
             isFocused
               ? "border-blue-400 shadow-[0_0_15px_rgba(59,130,246,0.5)] bg-zinc-300 dark:bg-zinc-700"
-              : "border-gray-500 bg-zinc-200 dark:bg-zinc-800"
+              : "border-gray-500 bg-zinc-200/70 dark:bg-zinc-800/70 backdrop-blur-md"
           }`}
         >
           <button className="ml-3 relative w-5 h-5 md:w-6 md:h-6 flex items-center justify-center">

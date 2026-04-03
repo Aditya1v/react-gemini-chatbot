@@ -3,18 +3,25 @@ import useTheme from "../hooks/useTheme";
 import { Trash2, Menu, X } from "lucide-react";
 import { useState } from "react";
 
-function Sidebar() {
+function Sidebar({ isOpen, setIsOpen }) {
   const { chats, loadChat, createNewChat, deleteChat } = useChat();
   const { theme, toggleTheme } = useTheme();
-
-  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <>
       {/* Hamburger Button (Mobile) */}
       <button
         onClick={() => setIsOpen(true)}
-        className="md:hidden fixed top-4 left-4 z-50 bg-zinc-200 dark:bg-zinc-700 p-2 rounded"
+        className={`md:hidden fixed top-4 left-4 z-50 
+        bg-white/30 dark:bg-zinc-800/30 
+        backdrop-blur-md 
+        border border-white/20 dark:border-white/10
+        p-2 rounded-full 
+        shadow-lg 
+        transition-all duration-300
+        hover:scale-105 active:scale-95
+        ${isOpen ? "ring-2 ring-blue-400/50" : ""}
+        `}
       >
         <Menu size={20} />
       </button>
@@ -44,7 +51,10 @@ function Sidebar() {
         </button>
 
         <button
-          onClick={createNewChat}
+          onClick={() => {
+            createNewChat();
+            setIsOpen(false);
+          }}
           className="w-full mb-3 p-2 bg-blue-500 rounded"
         >
           + New Chat
