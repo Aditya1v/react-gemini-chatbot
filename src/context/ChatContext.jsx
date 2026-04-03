@@ -40,57 +40,77 @@ export const ChatProvider = ({ children }) => {
   };
 
   const askQuerry = async () => {
-    if (!querry) return;
-     
-     setQuerry(""); 
-    const currentChat = chats.find((c) => c.id === currentChatId);
+  if (!querry) return;
 
-    const tempMessages = [
+  let chatId = currentChatId;
+  let updatedChats = [...chats];
+
+  // 🔥 FIX 1: AUTO CREATE CHAT (FIRST MESSAGE)
+  if (!chatId) {
+    const newChat = {
+      id: Date.now(),
+      messages: [],
+      title: "New Chat",
+    };
+
+    updatedChats = [newChat, ...updatedChats];
+    setChats(updatedChats);
+    setCurrentChatId(newChat.id);
+
+    chatId = newChat.id;
+  }
+
+  const currentChat = updatedChats.find((c) => c.id === chatId);
+
+  setQuerry("");
+
+  const tempMessages = [
+    ...(currentChat?.messages || []),
+    { type: "q", text: querry },
+    { type: "loading" },
+  ];
+
+  setResult(tempMessages);
+
+  try {
+    const conversation = currentChat
+      ? buildConversation(currentChat.messages)
+      : [];
+
+    const payload = {
+      contents: [
+        ...conversation,
+        { role: "user", parts: [{ text: querry }] },
+      ],
+    };
+
+    const answer = await fetchChatResponse(payload);
+
+    const finalMessages = [
       ...(currentChat?.messages || []),
       { type: "q", text: querry },
-      { type: "loading" },
+      { type: "a", text: answer },
     ];
 
-    setResult(tempMessages);
+    // 🔥 FIX 2: SAFE UPDATE (no replace issue)
+    updatedChats = updatedChats.map((chat) =>
+      chat.id === chatId
+        ? {
+            ...chat,
+            messages: finalMessages,
+            title: generateChatTitle(querry, chat.title),
+          }
+        : chat
+    );
 
-    try {
-      const conversation = currentChat
-        ? buildConversation(currentChat.messages)
-        : [];
+    setChats(updatedChats);
+    setResult(finalMessages);
+    localStorage.setItem("chats", JSON.stringify(updatedChats));
 
-      const payload = {
-        contents: [
-          ...conversation,
-          { role: "user", parts: [{ text: querry }] },
-        ],
-      };
-
-      const answer = await fetchChatResponse(payload);
-
-      const finalMessages = [
-        ...(currentChat?.messages || []),
-        { type: "q", text: querry },
-        { type: "a", text: answer },
-      ];
-
-      const updatedChats = chats.map((chat) =>
-        chat.id === currentChatId
-          ? {
-              ...chat,
-              messages: finalMessages,
-              title: generateChatTitle(querry, chat.title),
-            }
-          : chat
-      );
-
-      setChats(updatedChats);
-      setResult(finalMessages);
-      localStorage.setItem("chats", JSON.stringify(updatedChats));
-      
-    } catch {
-      alert("API error");
-    }
-  };
+  } catch {
+    alert("API error");
+  }
+};
   const deleteChat = (id) => {
   const updated = chats.filter(chat => chat.id !== id);
   setChats(updated);
