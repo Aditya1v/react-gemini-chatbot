@@ -38,7 +38,7 @@ const ChatLayout = ({ isOpen }) => {
       </div>
 
       {/* Chat Area */}
-      <div className="flex-1 overflow-y-auto overflow-x-hidden min-h-0 px-3 md:px-10 pb-28 py-6">
+      <div className="flex-1 overflow-y-auto overflow-x-scroll min-h-0 px-3 md:px-10 pb-28 py-6">
         <ul className="space-y-4 w-full max-w-[90%] mx-auto">
           {result.map((item, index) => (
             <QuerryAnswer key={index} item={item} />
