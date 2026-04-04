@@ -122,7 +122,7 @@ export const ChatProvider = ({ children }) => {
       // setResult(finalMessages);
       localStorage.setItem("chats", JSON.stringify(updatedChats));
     } catch {
-      alert("API error");
+      alert("API Token Limit Exceeds!🥲");
     }
   };
   const deleteChat = (id) => {

@@ -22,22 +22,22 @@ const QuerryAnswer = ({ item }) => {
         }`}
       >
         <div
-          className={`p-3 transition-all duration-300 ${
+          className={`p-3 transition-all duration-300 wrap-break-words whitespace-pre-wrap ${
             item.type === "q"
               ? "bg-blue-500 text-white px-4 py-2 rounded-2xl rounded-br-sm"
               : "bg-white text-black dark:bg-zinc-800 dark:text-white rounded-2xl"
           }`}
         >
           {item.type === "q" ? (
-  item.text
-) : item.loading ? (
-  <span className="typing">
-    {item.text}
-    <span className="dots"></span>
-  </span>
-) : (
-  <Answers ans={item.text} />
-)}
+            item.text
+          ) : item.loading ? (
+            <span className="typing ">
+              {item.text}
+              <span className="dots"></span>
+            </span>
+          ) : (
+            <Answers ans={item.text}/>
+          )}
         </div>
       </div>
     </div>
