@@ -47,7 +47,7 @@ const QuerryAnswer = ({ item }) => {
           }`}
         >
           <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">
-            {isQuestion ? "You" : "AI Assistant"}
+            {isQuestion ? "You" : "ChatLy"}
           </p>
 
           <div

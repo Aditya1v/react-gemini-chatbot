@@ -60,7 +60,7 @@ function SidebarBody({
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[20px] bg-slate-950/90 p-2 shadow-lg shadow-sky-500/10 dark:bg-white/10">
             <img
               src="/favicon.svg"
-              alt="AI ChatBot"
+              alt="ChatLy"
               className="h-8 w-8 object-contain"
             />
           </div>
@@ -70,7 +70,7 @@ function SidebarBody({
               Pro Workspace
             </div>
             <h1 className="font-display mt-3 text-xl font-bold text-slate-950 dark:text-white">
-              AI ChatBot
+              ChatLy
             </h1>
             <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">
               A focused chat surface for research, drafting, debugging, and
